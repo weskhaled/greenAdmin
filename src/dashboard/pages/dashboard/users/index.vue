@@ -1,0 +1,210 @@
+<script setup lang="ts">
+import { message } from 'ant-design-vue'
+import dayjs from 'dayjs'
+import { api as apiServices } from '~/common/composables'
+
+const search = ref('')
+const selectedUser = ref(null)
+const visibleUserFormModal = ref(false)
+const routes = [
+  {
+    path: 'dashboard-index',
+    breadcrumbName: 'Dashboard',
+  },
+  {
+    path: 'dashboard-users',
+    breadcrumbName: 'Users & Roles',
+  },
+]
+const dataUsers = ref<any>(null)
+const columns = ref([
+  {
+    title: 'username',
+    dataIndex: 'username',
+    key: 'username',
+    sorter: true,
+  },
+  {
+    title: 'email',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'visibility',
+    dataIndex: 'visibility',
+    key: 'visibility',
+    sorter: true,
+    filters: [
+      { text: 'Visible', value: 'true' },
+      { text: 'Invisible', value: 'false' },
+    ],
+  },
+  {
+    title: 'createdAt',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
+    sorter: true,
+  },
+  {
+    title: 'role',
+    dataIndex: 'role',
+    key: 'role',
+  },
+  {
+    title: 'Action',
+    key: 'operation',
+    fixed: 'right',
+    width: 200,
+  },
+])
+const getUsers = async() => {
+  const { data, error } = await apiServices('/admin/').json()
+  data && !error.value && (dataUsers.value = data.value)
+}
+onMounted(() => {
+  getUsers()
+})
+const updateOrCreateUser = async(dataUser) => {
+  console.log(dataUser)
+  if (dataUser._id) {
+    const userId = dataUser._id
+    delete dataUser._id
+    const { data: updateUser, error } = await apiServices(`/admin/${userId}`).patch(dataUser).json()
+    updateUser.value && !error.value && (console.log(updateUser.value))
+  }
+  else {
+    const { data: createUser, error } = await apiServices('/auth/addRoot').post(dataUser).json()
+    createUser.value && !error.value && (message.success('create new user'))
+  }
+  getUsers()
+  visibleUserFormModal.value = false
+}
+const deleteUser = async(userId) => {
+  console.log(userId)
+  const { data: deleteUser, error } = await apiServices(`/admin/${userId}`).delete().json()
+  deleteUser.value && !error.value && (message.success(deleteUser.value?.message))
+  getUsers()
+}
+</script>
+
+<template>
+  <div class="p-4">
+    <a-page-header
+      class="!bg-white !dark:bg-dark-600 !p-4 !mb-4 drop-shadow-sm drop-shadow-dark-100/1 rounded-1px"
+      title="Users" :breadcrumb="{ routes }" sub-title="List of Users"
+    >
+      <template #tags>
+        <a-tag color="blue">
+          Running
+        </a-tag>
+      </template>
+      <template #extra>
+        <a-input-search
+          v-model:value="search" allow-clear placeholder="input search loading" :loading="!dataUsers"
+          :disabled="!search.length && dataUsers && dataUsers.length === 0" enter-button class="!w-55"
+        >
+          <template v-if="false" #suffix>
+            <a-tooltip title="scroll to device">
+              <a-button type="link" size="small">
+                <template #icon>
+                  <span class="i-carbon-auto-scroll anticon block text-sm text-opacity-10" />
+                </template>
+              </a-button>
+            </a-tooltip>
+          </template>
+        </a-input-search>
+        <a-button key="2">
+          Operation
+        </a-button>
+        <a-button key="1" type="primary" @click="() => { selectedUser = null, visibleUserFormModal = true }">
+          Add New Admin
+        </a-button>
+        <a-dropdown key="more">
+          <a-button class="!border-none !px-1" type="link">
+            <span class="i-carbon-overflow-menu-horizontal inline-block anticon text-lg !align-top" />
+          </a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+                  1st menu item
+                </a>
+              </a-menu-item>
+              <a-menu-item>
+                <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+                  2nd menu item
+                </a>
+              </a-menu-item>
+              <a-menu-item>
+                <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+                  3rd menu item
+                </a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </template>
+    </a-page-header>
+    <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
+      <a-table :loading="!dataUsers" size="small" :data-source="dataUsers || []" :columns="columns">
+        <template #bodyCell="{ record, column, text }">
+          <template v-if="column.dataIndex === 'visibility'">
+            <a-tag :color="text === 1 ? 'green' : 'red'">
+              {{ text === 1 ? 'visible' : 'invisible' }}
+            </a-tag>
+          </template>
+          <template v-if="column.dataIndex === 'createdAt'">
+            {{ dayjs(text).format('DD/MM/YYYY HH:mm') }}
+          </template>
+          <template v-if="column.key === 'operation'">
+            <a-button
+              size="small" class="mr-1 inline-block" type="link"
+              @click="() => { selectedUser = record, visibleUserFormModal = true }"
+            >
+              Edit
+            </a-button>
+            <a-popconfirm title="Are you sure？" ok-text="Yes" cancel-text="No" @confirm="deleteUser(record._id)">
+              <a-button size="small" class="mr-1 inline-block" type="link" danger>
+                Delete
+              </a-button>
+            </a-popconfirm>
+          </template>
+        </template>
+      </a-table>
+    </div>
+  </div>
+  <user-form-modal
+    v-model:visible="visibleUserFormModal"
+    :user="selectedUser" @after-close="() => selectedUser = null"
+    @update-or-create-user="updateOrCreateUser"
+  />
+</template>
+<style lang="less">
+.pagination-container {
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &__list {
+    height: 370px;
+    overflow: auto;
+
+    &-suffix {
+      margin-right: 20px;
+    }
+  }
+}
+</style>
+<route lang="yaml">
+meta:
+  layout: admin
+  siderMenu:
+    name: dashboard.users.index
+    index: 1
+    parentName: dashboard.users.parent
+    link: dashboard-users
+    classes: test for classes
+    icon: i-ph-users-duotone
+    childOf: null
+</route>

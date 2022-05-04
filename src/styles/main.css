@@ -1,0 +1,22 @@
+@import './markdown.css';
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: inherit;
+}
+
+html.dark {
+  background: #121212;
+}
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  @apply fixed opacity-[75%] top-0 left-0 w-full h-2px bg-green-700 dark:bg-green-300;
+}
