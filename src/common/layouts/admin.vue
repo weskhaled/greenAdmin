@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useJwt } from '@vueuse/integrations/useJwt'
 import { api as apiServices } from '~/common/composables'
-import { currentUser, isAuthenticated, token } from '~/common/stores'
+import { currentUser, isAuthenticated, mdAndLarger, token } from '~/common/stores'
 
 const router = useRouter()
 
@@ -35,7 +35,7 @@ watch(
       <LayoutSider class="!absolute !top-0 !md:block !md:relative" />
       <a-layout>
         <a-layout-content class="!min-h-1/2 !md:h-full !w-full !md:w-auto">
-          <div ref="mapContainerRef" class="overflow-hidden !h-full !w-full relative">
+          <div ref="mapContainerRef" class="overflow-hidden !h-full !w-full relative p-4" :class="mdAndLarger ? ' pt-4' : 'pt-4'">
             <a-skeleton v-if="!currentUser" class="p-5" active />
             <router-view v-else />
           </div>

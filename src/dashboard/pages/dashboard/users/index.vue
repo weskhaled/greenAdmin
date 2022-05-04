@@ -88,7 +88,7 @@ const deleteUser = async(userId) => {
 </script>
 
 <template>
-  <div class="p-4">
+  <div>
     <a-page-header
       class="!bg-white !dark:bg-dark-600 !p-4 !mb-4 drop-shadow-sm drop-shadow-dark-100/1 rounded-1px"
       title="Users" :breadcrumb="{ routes }" sub-title="List of Users"

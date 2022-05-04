@@ -38,12 +38,12 @@ onMounted(() => {
   <a-layout-sider
     class="z-42 md:rounded-none rounded-b-sm overflow-hidden" :collapsed="sideCollapsed" :trigger="null"
     collapsed-width="60"
-    width="240"
+    :width="mdAndLarger ? 240 : 60"
   >
     <a-menu
       v-model:selectedKeys="selectedKeysSider" v-model:openKeys="openKeySider" :inline-indent="24"
       :theme="isDark ? 'dark' : 'light'" :mode="mdAndLarger ? 'inline' : 'horizontal'" :style="{ height: '100%' }"
-      class="!dark:border-r-1px !dark:border-white/5 !pt-2" @click="({ key }) => $router.push({ name: key })"
+      class="!dark:border-r-1px !dark:border-white/5 !md:pt-2" @click="({ key }) => $router.push({ name: key })"
     >
       <component :is="parent.children ? SubMenu : MenuItem" v-for="parent in menuItems" :key="parent.link">
         <template v-if="parent.children" #title>
@@ -93,7 +93,7 @@ onMounted(() => {
 .ant-menu-vertical-left>.ant-menu-item,
 .ant-menu-vertical-right>.ant-menu-item,
 .ant-menu-inline:not(.ant-menu-sub)>.ant-menu-item {
-  @apply  !h-50px !leading-50px;
+  @apply  !h-36px !leading-36px !md:h-50px !md:leading-50px;
 }
 
 .ant-menu.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
