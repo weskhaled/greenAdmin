@@ -15,10 +15,21 @@ not-found: Page non trouvée
 sidebarMenu:
   dashboard:
     index: Dashboard
+    admins:
+      parent: Administrateurs
+      index: Admins
+      roles: Editeurs
     users:
-      parent: Users & Roles
-      index: Users
-      roles: Roles
+      parent: Utilisateurs
+      freelancers: Freelances
+      agences: Agences
+      companies: Entreprises
+    jobs:
+      parent: Catégories de métiers
+      index: Métiers
+    skills:
+      parent: Compétences professionelles
+      index: Compétences
     settings:
       parent: Settings
       index: Account Settings

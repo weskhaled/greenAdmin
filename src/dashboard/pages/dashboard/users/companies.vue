@@ -14,9 +14,9 @@
 meta:
   layout: admin
   siderMenu:
-    name: dashboard.users.roles
-    link: dashboard-users-roles
+    name: dashboard.users.companies
+    link: dashboard-users-companies
     classes: test for classes
     icon: i-carbon-user-role
-    childOf: dashboard-users
+    childOf: dashboard-users-freelancers
 </route>

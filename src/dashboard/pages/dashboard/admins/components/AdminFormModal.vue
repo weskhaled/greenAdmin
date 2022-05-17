@@ -9,7 +9,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   user: () => ref(null),
 })
-const emit = defineEmits(['updateOrCreateUser'])
+const emit = defineEmits(['updateOrCreateAdmin'])
 
 const { t } = useI18n()
 const useForm = Form.useForm
@@ -106,7 +106,7 @@ const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef)
 const onSubmit = () => {
   validate()
     .then(() => {
-      emit('updateOrCreateUser', { ...toRaw(modelRef), _id: props.user?._id || undefined, email: props.user?.email || modelRef.email })
+      emit('updateOrCreateAdmin', { ...toRaw(modelRef), _id: props.user?._id || undefined, email: props.user?.email || modelRef.email })
     })
     .catch((err) => {
       console.log('error', err)

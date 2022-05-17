@@ -1,54 +1,27 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
-import dayjs from 'dayjs'
 import { api as apiServices } from '~/common/composables'
 
 const search = ref('')
-const selectedUser = ref(null)
-const visibleUserFormModal = ref(false)
+const selectedSkill = ref(null)
+const visibleSkillFormModal = ref(false)
 const routes = [
   {
     path: 'dashboard-index',
     breadcrumbName: 'Dashboard',
   },
   {
-    path: 'dashboard-users',
-    breadcrumbName: 'Users & Roles',
+    path: 'dashboard-skills',
+    breadcrumbName: 'Compétences',
   },
 ]
-const dataUsers = ref<any>(null)
+const dataSkills = ref<any>(null)
 const columns = ref([
   {
-    title: 'username',
-    dataIndex: 'username',
-    key: 'username',
+    title: 'compétences professionelles',
+    dataIndex: 'name',
+    key: 'name',
     sorter: true,
-  },
-  {
-    title: 'email',
-    dataIndex: 'email',
-    key: 'email',
-  },
-  {
-    title: 'visibility',
-    dataIndex: 'visibility',
-    key: 'visibility',
-    sorter: true,
-    filters: [
-      { text: 'Visible', value: 'true' },
-      { text: 'Invisible', value: 'false' },
-    ],
-  },
-  {
-    title: 'createdAt',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    sorter: true,
-  },
-  {
-    title: 'role',
-    dataIndex: 'role',
-    key: 'role',
   },
   {
     title: 'Action',
@@ -57,33 +30,33 @@ const columns = ref([
     width: 200,
   },
 ])
-const getUsers = async() => {
-  const { data, error } = await apiServices('/admin/').json()
-  data && !error.value && (dataUsers.value = data.value)
+const getSkills = async() => {
+  const { data, error } = await apiServices('/skills/').json()
+  data && !error.value && (dataSkills.value = data.value)
 }
 onMounted(() => {
-  getUsers()
+  getSkills()
 })
-const updateOrCreateUser = async(dataUser) => {
-  console.log(dataUser)
-  if (dataUser._id) {
-    const userId = dataUser._id
-    delete dataUser._id
-    const { data: updateUser, error } = await apiServices(`/admin/${userId}`).patch(dataUser).json()
-    updateUser.value && !error.value && (console.log(updateUser.value))
+const updateOrCreateSkill = async(dataSkill) => {
+  if (dataSkill._id) {
+    const skillId = dataSkill._id
+    delete dataSkill._id
+    const { data: updateSkill, error } = await apiServices(`/skills/${skillId}`).patch(dataSkill).json()
+    updateSkill.value && !error.value && (message.success(updateSkill.value.message))
   }
   else {
-    const { data: createUser, error } = await apiServices('/auth/addRoot').post(dataUser).json()
-    createUser.value && !error.value && (message.success('create new user'))
+    const { data: createSkill, error } = await apiServices('/skills/add-skill').post(dataSkill).json()
+    createSkill.value && !error.value && (message.success(createSkill.value.message))
+    if (error.value)
+      message.error(createSkill.value.message)
   }
-  getUsers()
-  visibleUserFormModal.value = false
+  getSkills()
+  visibleSkillFormModal.value = false
 }
-const deleteUser = async(userId) => {
-  console.log(userId)
-  const { data: deleteUser, error } = await apiServices(`/admin/${userId}`).delete().json()
-  deleteUser.value && !error.value && (message.success(deleteUser.value?.message))
-  getUsers()
+const deleteSkill = async(skillId) => {
+  const { data: deleteSkill, error } = await apiServices(`/skills/${skillId}`).delete().json()
+  deleteSkill.value && !error.value && (message.success(deleteSkill.value?.message))
+  getSkills()
 }
 </script>
 
@@ -91,7 +64,7 @@ const deleteUser = async(userId) => {
   <div>
     <a-page-header
       class="!bg-white !dark:bg-dark-600 !p-4 !mb-4 drop-shadow-sm drop-shadow-dark-100/1 rounded-1px"
-      title="Users" :breadcrumb="{ routes }" sub-title="List of Users"
+      title="Compétences" :breadcrumb="{ routes }" sub-title="Liste des compétences professionelles"
     >
       <template #tags>
         <a-tag color="blue">
@@ -100,8 +73,8 @@ const deleteUser = async(userId) => {
       </template>
       <template #extra>
         <a-input-search
-          v-model:value="search" allow-clear placeholder="input search loading" :loading="!dataUsers"
-          :disabled="!search.length && dataUsers && dataUsers.length === 0" enter-button class="!w-55"
+          v-model:value="search" allow-clear placeholder="rechercher :" :loading="!dataSkills"
+          :disabled="!search.length && dataSkills && dataSkills.length === 0" enter-button class="!w-55"
         >
           <template v-if="false" #suffix>
             <a-tooltip title="scroll to device">
@@ -113,12 +86,15 @@ const deleteUser = async(userId) => {
             </a-tooltip>
           </template>
         </a-input-search>
+        <!--
         <a-button key="2">
           Operation
         </a-button>
-        <a-button key="1" type="primary" @click="() => { selectedUser = null, visibleUserFormModal = true }">
-          Add New Admin
+        -->
+        <a-button key="1" type="primary" @click="() => { selectedSkill = null, visibleSkillFormModal = true }">
+          Ajouter une compétence
         </a-button>
+        <!--
         <a-dropdown key="more">
           <a-button class="!border-none !px-1" type="link">
             <span class="i-carbon-overflow-menu-horizontal inline-block anticon text-lg !align-top" />
@@ -143,29 +119,22 @@ const deleteUser = async(userId) => {
             </a-menu>
           </template>
         </a-dropdown>
+        -->
       </template>
     </a-page-header>
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
-      <a-table :loading="!dataUsers" size="small" :data-source="dataUsers || []" :columns="columns">
+      <a-table :loading="!dataSkills" size="small" :data-source="dataSkills || []" :columns="columns">
         <template #bodyCell="{ record, column, text }">
-          <template v-if="column.dataIndex === 'visibility'">
-            <a-tag :color="text === 1 ? 'green' : 'red'">
-              {{ text === 1 ? 'visible' : 'invisible' }}
-            </a-tag>
-          </template>
-          <template v-if="column.dataIndex === 'createdAt'">
-            {{ dayjs(text).format('DD/MM/YYYY HH:mm') }}
-          </template>
           <template v-if="column.key === 'operation'">
             <a-button
               size="small" class="mr-1 inline-block" type="link"
-              @click="() => { selectedUser = record, visibleUserFormModal = true }"
+              @click="() => {selectedSkill = record, visibleSkillFormModal = true }"
             >
-              Edit
+              Modifier
             </a-button>
-            <a-popconfirm title="Are you sure？" ok-text="Yes" cancel-text="No" @confirm="deleteUser(record._id)">
+            <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="deleteSkill(record._id)">
               <a-button size="small" class="mr-1 inline-block" type="link" danger>
-                Delete
+                Supprimer
               </a-button>
             </a-popconfirm>
           </template>
@@ -173,10 +142,10 @@ const deleteUser = async(userId) => {
       </a-table>
     </div>
   </div>
-  <user-form-modal
-    v-model:visible="visibleUserFormModal"
-    :user="selectedUser" @after-close="() => selectedUser = null"
-    @update-or-create-user="updateOrCreateUser"
+  <skill-form-modal
+    v-model:visible="visibleSkillFormModal"
+    :skill="selectedSkill" @after-close="() => selectedSkill = null"
+    @update-or-create-skill="updateOrCreateSkill"
   />
 </template>
 <style lang="less">
@@ -200,11 +169,11 @@ const deleteUser = async(userId) => {
 meta:
   layout: admin
   siderMenu:
-    name: dashboard.users.index
+    name: dashboard.skills.index
     index: 1
-    parentName: dashboard.users.parent
-    link: dashboard-users
+    parentName: dashboard.skills.parent
+    link: dashboard-skills
     classes: test for classes
-    icon: i-ph-users-duotone
+    icon: i-carbon:skill-level-basic
     childOf: null
 </route>

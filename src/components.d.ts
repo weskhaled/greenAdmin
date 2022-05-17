@@ -9,6 +9,7 @@ declare module '@vue/runtime-core' {
     AButton: typeof import('ant-design-vue/es')['Button']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
+    AdminFormModal: typeof import('./dashboard/pages/dashboard/admins/components/AdminFormModal.vue')['default']
     ADropdown: typeof import('ant-design-vue/es')['Dropdown']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
@@ -32,12 +33,14 @@ declare module '@vue/runtime-core' {
     DarkSwitch: typeof import('./common/components/DarkSwitch.vue')['default']
     DeviceFormModal: typeof import('./dashboard/components/device/DeviceFormModal.vue')['default']
     Footer: typeof import('./common/components/Footer.vue')['default']
+    JobFormModal: typeof import('./dashboard/pages/dashboard/jobs/components/JobFormModal.vue')['default']
     LayoutHeader: typeof import('./common/components/Layout/LayoutHeader.vue')['default']
     LayoutSider: typeof import('./common/components/Layout/LayoutSider.vue')['default']
     Map: typeof import('./common/components/Map.vue')['default']
     README: typeof import('./common/components/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SkillFormModal: typeof import('./dashboard/pages/dashboard/skills/components/SkillFormModal.vue')['default']
     UserFormModal: typeof import('./dashboard/pages/dashboard/users/components/UserFormModal.vue')['default']
   }
 }
