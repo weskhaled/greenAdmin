@@ -174,6 +174,6 @@ meta:
     parentName: dashboard.jobs.parent
     link: dashboard-jobs
     classes: test for classes
-    icon: i-ic:baseline-work
+    icon: i-carbon:industry
     childOf: null
 </route>

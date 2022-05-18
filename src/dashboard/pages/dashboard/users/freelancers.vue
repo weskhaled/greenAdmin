@@ -2,9 +2,10 @@
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { api as apiServices } from '~/common/composables'
-import { currentUser } from '~/common/stores'
 
 const search = ref('')
+const router = useRouter()
+
 const selectedUser = ref(null)
 const visibleUserFormModal = ref(false)
 const routes = [
@@ -19,12 +20,6 @@ const routes = [
 ]
 const dataUsers = ref<any>(null)
 const columns = ref([
-  {
-    title: 'Utilisateur',
-    dataIndex: 'username',
-    key: 'username',
-    sorter: true,
-  },
   {
     title: 'Email',
     dataIndex: 'email',
@@ -52,12 +47,14 @@ const columns = ref([
       { text: 'Visible', value: 'true' },
       { text: 'Invisible', value: 'false' },
     ],
+    align: 'center',
   },
   {
-    title: 'profil',
-    dataIndex: 'title_profile',
-    key: 'title_profile',
+    title: 'Tel.',
+    dataIndex: 'phone',
+    key: 'phone',
     sorter: true,
+    align: 'center',
   },
   {
     title: 'Niveau',
@@ -69,9 +66,10 @@ const columns = ref([
       { text: 'Intermediaire', value: 'Intermediaire' },
       { text: 'Senior', value: 'Senior' },
     ],
+    align: 'center',
   },
   {
-    title: 'Vérification Email',
+    title: 'Verif. email',
     dataIndex: 'email_verification',
     key: 'email_verification',
     sorter: true,
@@ -79,9 +77,10 @@ const columns = ref([
       { text: 'Oui', value: 'true' },
       { text: 'Non', value: 'false' },
     ],
+    align: 'center',
   },
   {
-    title: 'Validation Document',
+    title: 'Val. Doc.',
     dataIndex: 'documents_val',
     key: 'documents_val',
     sorter: true,
@@ -89,6 +88,7 @@ const columns = ref([
       { text: 'Oui', value: 'true' },
       { text: 'Non', value: 'false' },
     ],
+    align: 'center',
   },
   {
     title: 'Validation',
@@ -99,6 +99,7 @@ const columns = ref([
       { text: 'Oui', value: 'true' },
       { text: 'Non', value: 'false' },
     ],
+    align: 'center',
   },
   {
     title: 'Confidentialité',
@@ -109,6 +110,7 @@ const columns = ref([
       { text: 'Oui', value: 'true' },
       { text: 'Non', value: 'false' },
     ],
+    align: 'center',
   },
   {
     title: 'Création',
@@ -272,7 +274,7 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
           <template v-if="column.key === 'operation'">
             <a-button
               size="small" class="mr-1 inline-block" type="link"
-              @click="() => { selectedUser = record, visibleUserFormModal = true }"
+              @click="() => { router.push(`/dashboard/users/show-freelance/${record._id}`) }"
             >
               <span class="i-carbon-edit inline-block" />
             </a-button>
@@ -286,10 +288,10 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
             </a-popconfirm>
             <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="validateOrUnvalidateUser(record._id,record.documents_val)">
               <a-button v-if="text.documents_val == true" size="small" class="mr-1 inline-block" type="link" warn>
-                <span class="i-carbon-checkmark-outline inline-block" />
+                <span class="i-carbon-misuse-outline inline-block" />
               </a-button>
               <a-button v-else size="small" class="mr-1 inline-block" type="link" warn>
-                <span class="i-carbon-misuse-outline inline-block" />
+                <span class="i-carbon-checkmark-outline inline-block" />
               </a-button>
             </a-popconfirm>
             <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="deleteUser(record._id)">
