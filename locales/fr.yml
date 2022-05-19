@@ -18,7 +18,7 @@ sidebarMenu:
     admins:
       parent: Administrateurs
       index: Admins
-      roles: Editeurs
+      editors: Editeurs
     users:
       parent: Utilisateurs
       freelancers: Freelances
@@ -27,6 +27,9 @@ sidebarMenu:
     jobs:
       parent: Catégories de métiers
       index: Métiers
+    posts:
+      parent: Articles
+      index: Articles
     skills:
       parent: Compétences professionelles
       index: Compétences
