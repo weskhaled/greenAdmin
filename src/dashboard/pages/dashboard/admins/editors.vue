@@ -78,6 +78,7 @@ const columns = ref([
     key: 'operation',
     fixed: 'right',
     width: 200,
+    align: 'center',
   },
 ])
 const getUsers = async() => {
@@ -96,7 +97,7 @@ const updateOrCreateUser = async(dataUser) => {
   }
   else {
     const { data: createUser, error } = await apiServices('/editor/').post(dataUser).json()
-    createUser.value && !error.value && (message.success(createUser.value.messager))
+    createUser.value && !error.value && (message.success(createUser.value.message))
     if (error.value)
       message.error(createUser.value.message)
   }
@@ -144,32 +145,6 @@ const deleteUser = async(userId) => {
         <a-button key="1" type="primary" @click="() => { selectedUser = null, visibleUserFormModal = true }">
           Ajouter un Éditeur
         </a-button>
-        <!--
-        <a-dropdown key="more">
-          <a-button class="!border-none !px-1" type="link">
-            <span class="i-carbon-overflow-menu-horizontal inline-block anticon text-lg !align-top" />
-          </a-button>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-                  1st menu item
-                </a>
-              </a-menu-item>
-              <a-menu-item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-                  2nd menu item
-                </a>
-              </a-menu-item>
-              <a-menu-item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-                  3rd menu item
-                </a>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
-        -->
       </template>
     </a-page-header>
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
@@ -188,11 +163,11 @@ const deleteUser = async(userId) => {
               size="small" class="mr-1 inline-block" type="link"
               @click="() => { selectedUser = record, visibleUserFormModal = true }"
             >
-              Modifier
+              <span class="i-carbon-edit inline-block" />
             </a-button>
             <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="deleteUser(record._id)">
               <a-button size="small" class="mr-1 inline-block" type="link" danger>
-                Supprimer
+                <span key="delete" class="i-carbon-delete inline-block" />
               </a-button>
             </a-popconfirm>
           </template>

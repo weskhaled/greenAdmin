@@ -142,7 +142,7 @@ watch(() => props.user, () => {
   <a-modal width="55%" destroy-on-close @after-close="resetFields()">
     <template #title>
       <span>
-        {{ user ? `Modifier ${user.username}` : 'Création' }}
+        {{ user ? `Modifier ${user.username}` : 'Création Admin' }}
       </span>
     </template>
     <a-form layout="vertical">

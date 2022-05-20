@@ -28,6 +28,7 @@ const columns = ref([
     key: 'operation',
     fixed: 'right',
     width: 200,
+    align: 'center',
   },
 ])
 const getJobs = async() => {
@@ -130,11 +131,11 @@ const deleteJob = async(jobId) => {
               size="small" class="mr-1 inline-block" type="link"
               @click="() => {selectedJob = record, visibleJobFormModal = true }"
             >
-              Modifier
+              <span class="i-carbon-edit inline-block" />
             </a-button>
             <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="deleteJob(record._id)">
               <a-button size="small" class="mr-1 inline-block" type="link" danger>
-                Supprimer
+                <span key="delete" class="i-carbon-delete inline-block" />
               </a-button>
             </a-popconfirm>
           </template>

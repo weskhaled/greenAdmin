@@ -123,6 +123,7 @@ const columns = ref([
     key: 'operation',
     fixed: 'right',
     width: 200,
+    align: 'center',
   },
 ])
 const getUsers = async() => {
@@ -274,7 +275,7 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
           <template v-if="column.key === 'operation'">
             <a-button
               size="small" class="mr-1 inline-block" type="link"
-              @click="() => { router.push(`/dashboard/users/show-freelance/${record._id}`) }"
+              @click="() => { router.push(`/dashboard/users/freelance/${record._id}`) }"
             >
               <span class="i-carbon-edit inline-block" />
             </a-button>

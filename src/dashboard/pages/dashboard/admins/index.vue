@@ -57,6 +57,7 @@ const columns = ref([
     key: 'operation',
     fixed: 'right',
     width: 200,
+    align: 'center',
   },
 ])
 const getUsers = async() => {
@@ -66,7 +67,7 @@ const getUsers = async() => {
 onMounted(() => {
   getUsers()
 })
-const updateOrCreateUser = async(dataUser) => {
+const updateOrCreateAdmin = async(dataUser) => {
   if (dataUser._id) {
     const userId = dataUser._id
     delete dataUser._id
@@ -173,11 +174,11 @@ const deleteUser = async(userId) => {
               size="small" class="mr-1 inline-block" type="link"
               @click="() => { selectedUser = record, visibleUserFormModal = true }"
             >
-              Modifier
+              <span class="i-carbon-edit inline-block" />
             </a-button>
             <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="deleteUser(record._id)">
               <a-button size="small" class="mr-1 inline-block" type="link" danger>
-                Supprimer
+                <span key="delete" class="i-carbon-delete inline-block" />
               </a-button>
             </a-popconfirm>
           </template>
@@ -188,7 +189,7 @@ const deleteUser = async(userId) => {
   <admin-form-modal
     v-model:visible="visibleUserFormModal"
     :user="selectedUser" @after-close="() => selectedUser = null"
-    @update-or-create-user="updateOrCreateAdmin"
+    @update-or-create-admin="updateOrCreateAdmin"
   />
 </template>
 <style lang="less">

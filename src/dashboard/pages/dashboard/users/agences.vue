@@ -105,6 +105,7 @@ const columns = ref([
     key: 'operation',
     fixed: 'right',
     width: 200,
+    align: 'center',
   },
 ])
 const getUsers = async() => {
