@@ -257,7 +257,7 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
           <template v-if="column.key === 'operation'">
             <a-button
               size="small" class="mr-1 inline-block" type="link"
-              @click="() => { router.push(`/dashboard/users/show-agence/${record._id}`) }"
+              @click="() => { router.push(`/dashboard/users/agence/${record._id}`) }"
             >
               <span class="i-carbon-edit inline-block" />
             </a-button>
