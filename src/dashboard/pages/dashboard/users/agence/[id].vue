@@ -27,14 +27,13 @@ const fileListVigilanceDocuments = ref([])
 const fileListSasuDocuments = ref([])
 
 const handleChangeDocuments = (info: any) => {
-  if (info.file.status !== 'uploading')
-    console.log(info.file, info.fileList)
+  if (info.file.status !== 'uploading') {
+    if (info.file.status === 'done')
+      message.success(`${info.file.name} téléchargé avec succés`)
 
-  if (info.file.status === 'done')
-    message.success(`${info.file.name} téléchargé avec succés`)
-
-  else if (info.file.status === 'error')
-    message.error(`une erreur est survenu lors du téléchargement de ${info.file.name}.`)
+    else if (info.file.status === 'error')
+      message.error(`une erreur est survenu lors du téléchargement de ${info.file.name}.`)
+  }
 }
 
 const formItemLayout = {
@@ -1327,8 +1326,6 @@ const beforeUploadRef = async(file: any) => {
     message.error('Image must smaller than 2MB!')
   if (isJpgOrPng && isLt2M) {
     modelRefReference.image = [file]
-    console.log('after upload', modelRefReference.image)
-
     const base64 = await useBase64(file).execute()
     profileAvatarReference.value = base64
   }

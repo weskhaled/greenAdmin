@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import Cloudinary, { CldContext, CldImage, CldTransformation } from 'cloudinary-vue'
 import type { UserModule } from '~/types'
 import { userLang } from '~/common/stores'
 

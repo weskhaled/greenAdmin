@@ -1,37 +1,15 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
-// import Cloudinary, { CldContext, CldImage, CldTransformation } from 'cloudinary-vue'
 import dayjs, { Dayjs } from 'dayjs'
 import { Form, Modal, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
 import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-// import { createApp } from 'vue'
-import App from './[id].vue'
 import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 
 import { api as apiServices } from '~/common/composables'
 const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
-const cloudName = `${import.meta.env.VITE_API_CLOUDNAME}`
-const cloudApiKey = `${import.meta.env.VITE_API_CLOUDAPIKEY}`
-const cloudApiSecret = `${import.meta.env.VITE_API_CLOUDAPISECRET}`
-/*
-const app = createApp(App)
-app.use(Cloudinary, {
-  configuration: {
-    cloudName: 'green-positiv-test',
-    api_key: '724897167162486',
-    api_secret: 'X36MS26P3cKdGRk9cMqorDuBGuo',
-    secure: true,
-  },
-  components: {
-    CldContext,
-    CldImage,
-    CldTransformation,
-  },
-})
-*/
 
 SwiperCore.use([Controller, Pagination])
 const controlledSwiper = ref(null)
@@ -110,14 +88,13 @@ const fileListVigilanceDocuments = ref([])
 const fileListSasuDocuments = ref([])
 
 const handleChangeDocuments = (info: any) => {
-  if (info.file.status !== 'uploading')
-    console.log(info.file, info.fileList)
+  if (info.file.status !== 'uploading') {
+    if (info.file.status === 'done')
+      message.success(`${info.file.name} téléchargé avec succés`)
 
-  if (info.file.status === 'done')
-    message.success(`${info.file.name} téléchargé avec succés`)
-
-  else if (info.file.status === 'error')
-    message.error(`une erreur est survenu lors du téléchargement de ${info.file.name}.`)
+    else if (info.file.status === 'error')
+      message.error(`une erreur est survenu lors du téléchargement de ${info.file.name}.`)
+  }
 }
 
 /* module devis */
@@ -365,7 +342,6 @@ const getFormData = async() => {
   const { data: dataProfileEntreprise, error: errorProfileEntreprise } = await apiServices(`/profil-entreprise/${props.id}`).json()
   if (dataProfileEntreprise.value && !errorProfileEntreprise.value) {
     profileEntreprise.value = dataProfileEntreprise.value
-    console.log('profileEntreprise.value', profileEntreprise.value)
     const contactDetails = profileEntreprise.value.contactDetails
     const legalRepresentative = profileEntreprise.value.legalRepresentative
     const legalMention = profileEntreprise.value.legalMention

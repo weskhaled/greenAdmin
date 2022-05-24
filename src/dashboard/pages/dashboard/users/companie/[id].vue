@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
-// import Cloudinary, { CldContext, CldImage, CldTransformation } from 'cloudinary-vue'
 import dayjs, { Dayjs } from 'dayjs'
 import { Form, Modal, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
 import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-// import { createApp } from 'vue'
-import App from './[id].vue'
 import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 import { api as apiServices } from '~/common/composables'
@@ -53,11 +50,13 @@ const valdiateDemandLoading = ref(false)
 const unvaldiateDemandLoading = ref(false)
 
 const controlledSwiper = ref(null)
+const controlledMissionSwiper = ref(null)
+
 const setControlledSwiper = (swiper) => {
   controlledSwiper.value = swiper
 }
 const setMissionSwiper = (swiper) => {
-  controlledSwiper.value = swiper
+  controlledMissionSwiper.value = swiper
 }
 const setDemandSwiper = (swiper) => {
   controlledSwiper.value = swiper
@@ -337,20 +336,20 @@ const rulesCollab = reactive({
 })
 const getFormData = async() => {
   const { data: dataJobs, error: errorJobs } = await apiServices('/jobs/').json()
-  dataJobs && !errorJobs.value && (jobs.value = dataJobs.value.filter(j => j._id && j.name).map(j => ({
+  dataJobs.value && !errorJobs.value && (jobs.value = dataJobs.value.filter(j => j._id && j.name).map(j => ({
     value: j._id,
     label: j.name,
   })))
 
   const { data: dataMissions, error: errorMissions } = await apiServices(`/missions/all/${props.id}`).json()
-  if (dataMissions && !errorMissions.value)
+  if (dataMissions.value && !errorMissions.value)
     missions.value = dataMissions.value
-  else
-    message.error(errorMissions.value)
+
+  else message.error(errorMissions.value)
 
   const { data: dataDemands, error: errorDemands } = await apiServices(`/demands/get/${props.id}`).json()
   if (dataDemands && !errorDemands.value)
-    missions.value = dataDemands.value
+    demands.value = dataDemands.value
   else
     message.error(errorDemands.value)
 
@@ -363,7 +362,7 @@ const getFormData = async() => {
   profile.value = null
   const { data: dataCompanie, error: errorCompanie } = await apiServices(`/company/get/${props.id}`).json()
   if (dataCompanie && !errorCompanie.value) {
-    profile.value = data.value
+    profile.value = dataCompanie.value
     const company = profile.value?.company
     profileAvatar.value = company.image || ''
     formStateProfile.email = company.email
@@ -389,7 +388,7 @@ const getFormData = async() => {
   profileEntreprise.value = null
   const { data: dataProfileEntreprise, error: errorProfileEntreprise } = await apiServices(`/profil-entreprise-company/${props.id}`).json()
   if (dataProfileEntreprise.value && !errorProfileEntreprise.value) {
-    profileEntreprise.value = data
+    profileEntreprise.value = dataProfileEntreprise.value
     formStateProfileEntreprise.name = profileEntreprise.value?.profile?.name
     formStateProfileEntreprise.size = profileEntreprise.value?.profile?.size
     formStateProfileEntreprise.sector_activity = profileEntreprise.value?.profile?.sector_activity
@@ -429,7 +428,7 @@ const onSubmitCollab = async() => {
       }
     })
     .catch((err) => {
-      console.log(err)
+      message.error(err)
     }).finally(() => profileEntrepriseLoading.value = false)
 }
 
@@ -591,13 +590,13 @@ const updateMission = (id: string) => {
   router.push(`/missions/update/${id}`)
 }
 const searchDemand = (id: string) => {
-  router.push(`/missions/search/green/${id}`)
+  router.push(`/dashboard/missions/search/green/${id}`)
 }
 const searchProfiles = (id: string) => {
-  router.push(`/missions/search/${id}`)
+  router.push(`/dashboard/missions/search/${id}`)
 }
 const showMission = (id: string) => {
-  router.push(`/missions/${id}`)
+  router.push(`/dashboard/missions/${id}`)
 }
 const deleteMission = (id: string) => {
   setTimeout(() => {
@@ -743,7 +742,7 @@ onMounted(async() => {
       <div class="container pt-5">
         <a-skeleton v-if="!profile" avatar active :paragraph="{ rows: 15 }" />
         <div v-else class>
-          <div class="p-2 flex bg-white rounded-sm">
+          <div class="p-2 flex rounded-sm">
             <div class="mr-5 flex-none">
               <a-avatar
                 :src="profile?.company?.image"
@@ -758,7 +757,7 @@ onMounted(async() => {
                   <div class="flex items-center mb-2">
                     <a
                       href="#"
-                      class="text-gray-900 text-hover-primary fs-4"
+                      class="text-hover-primary fs-4"
                     >{{ `${profile?.company?.lastName} ${profile?.company?.firstName}` }}</a>
                     <a href="#" class="flex items-center mr-3 ml-1">
                       <span
@@ -774,19 +773,19 @@ onMounted(async() => {
                   <div class="flex flex-wrap fw-bold fs-6 mb-4 pe-2">
                     <a
                       href="#"
-                      class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2"
+                      class="d-flex align-items-center  text-hover-primary me-5 mb-2"
                     >
                       <span class="i-carbon-user-avatar-filled-alt text-xl inline-block mr-1" />
                       {{ profileEntreprise?.profile?.name }}
                     </a>
                     <a
                       href="#"
-                      class="flex items-center text-gray-400 text-hover-primary me-5 mb-2"
+                      class="flex items-center  text-hover-primary me-5 mb-2"
                     >
                       <span class="i-carbon-user-multiple text-xl inline-block mr-1" />
                       {{ sizeCompanies[profileEntreprise?.profile?.size]?.label }}
                     </a>
-                    <a href="#" class="flex items-center text-gray-400 text-hover-primary mb-2">
+                    <a href="#" class="flex items-center  text-hover-primary mb-2">
                       <span class="i-carbon-email text-xl inline-block mr-1" />
                       {{ currentUser?.email }}
                     </a>
@@ -794,7 +793,7 @@ onMounted(async() => {
                   <!--end::Info-->
                 </div>
                 <div class="flex">
-                  <a-card :bordered="false" class="bg-white" :body-style="{padding: '5px'}">
+                  <a-card :bordered="false" :body-style="{padding: '5px'}">
                     <a-progress
                       type="circle" :stroke-color="{
                         '0%': '#108ee9',
@@ -1388,12 +1387,8 @@ onMounted(async() => {
                           <a-badge-ribbon class="mr-2" color="blue" :text="`${item.nbDevis} devis non traité`">
                             <a-card class="mr-2" hoverable>
                               <template #actions>
-                                <span v-if="isSupported && !sendDemandLoading" key="green" class="i-carbon-catalog inline-block greenIconAction" @click="sendSearchDemand(item.mission._id)" />
-                                <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
                                 <span v-if="isSupported" key="show" class="i-carbon-view inline-block" @click="showMission(item.mission._id)" />
                                 <span v-if="isSupported" key="search" class="i-carbon-search inline-block" @click="searchProfiles(item.mission._id)" />
-                                <span v-if="isSupported" key="edit" class="i-carbon-edit inline-block" @click="updateMission(item.mission._id)" />
-                                <span key="delete" class="i-ant-design-delete-twotone inline-block" @click="deleteMission(item.mission._id)" />
                                 <span v-if="isSupported" key="copy" class="i-ant-design-copy-twotone inline-block" @click="copyToClipboardMission(`${item.mission._id}`)" />
                               </template>
 
