@@ -590,10 +590,10 @@ const updateMission = (id: string) => {
   router.push(`/missions/update/${id}`)
 }
 const searchDemand = (id: string) => {
-  router.push(`/dashboard/missions/search/green/${id}`)
+  router.push(`/dashboard/search/green/${id}`)
 }
 const searchProfiles = (id: string) => {
-  router.push(`/dashboard/missions/search/${id}`)
+  router.push(`/dashboard/search/${id}`)
 }
 const showMission = (id: string) => {
   router.push(`/dashboard/missions/${id}`)

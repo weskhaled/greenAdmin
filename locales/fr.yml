@@ -24,6 +24,12 @@ sidebarMenu:
       freelancers: Freelances
       agences: Agences
       companies: Entreprises
+    search:
+      parent: Recherche de profils
+      index: Profils
+    demands:
+      parent: Demandes
+      index: Demandes
     jobs:
       parent: Catégories de métiers
       index: Métiers
@@ -33,6 +39,12 @@ sidebarMenu:
     skills:
       parent: Compétences professionelles
       index: Compétences
+    notifications:
+      parent: Notifications
+      posts: notifications posts
+      editors: notifications éditeurs
+      freelance: notifications freelance
+      agence: notifications solutions innovantes
     settings:
       parent: Settings
       index: Account Settings

@@ -252,9 +252,6 @@ const getDevis = async(idCompany: any) => {
   }
   else { message.error(errorDevisByMissionId.value) }
 }
-const payment = async(item: any) => {
-  visiblePaymentFormModal = true
-}
 
 const getFormData = async() => {
   const { data: dataJobs, error: errorJobs } = await apiServices('/jobs/').json()
@@ -360,14 +357,6 @@ const onFinishFailed = (errorInfo: any) => {
                       <div v-if="item.id_freelance">
                         <a-badge-ribbon v-if="item.confirmed && item.confirmed == true" class="mr-2" color="green" text="accepté">
                           <a-card class="mr-2" hoverable>
-                            <template v-if="item.confirmed == true" #actions>
-                              <span key="payment" class="i-carbon-purchase inline-block" @click="payment(item)" />
-                            </template>
-                            <template v-else #actions>
-                              <span key="accept" class="i-carbon-checkmark-outline inline-block" @click="acceptDevis(item)" />
-                              <span v-if="!sendRefuseDevis" key="refuse" class="i-carbon-misuse-outline inline-block" @click="refuseDevis(item)" />
-                              <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
-                            </template>
                             <a-card-meta :title="`Freelance : ${users[index].firstName} ${users[index].lastName}`">
                               <template #description>
                                 <div class="flex items-center justify-center">
@@ -459,12 +448,6 @@ const onFinishFailed = (errorInfo: any) => {
                         </a-badge-ribbon>
                         <a-badge-ribbon v-else-if="item.confirmed == false" class="mr-2" color="red" text="refusé">
                           <a-card class="mr-2" hoverable>
-                            <template #actions>
-                              <span key="accept" class="i-carbon-checkmark-outline inline-block" @click="acceptDevis(item)" />
-
-                              <span v-if="!sendRefuseDevis" key="refuse" class="i-carbon-misuse-outline inline-block" @click="refuseDevis(item)" />
-                              <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
-                            </template>
                             <a-card-meta :title="`Freelance : ${users[index].firstName} ${users[index].lastName}`">
                               <template #description>
                                 <div class="flex items-center justify-center">
@@ -543,12 +526,6 @@ const onFinishFailed = (errorInfo: any) => {
                           </a-card>
                         </a-badge-ribbon>
                         <a-card v-else class="mr-2" hoverable>
-                          <template #actions>
-                            <span key="accept" class="i-carbon-checkmark-outline inline-block" @click="acceptDevis(item)" />
-
-                            <span v-if="!sendRefuseDevis" key="refuse" class="i-carbon-misuse-outline inline-block" @click="refuseDevis(item)" />
-                            <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
-                          </template>
                           <a-card-meta :title="`Freelance : ${users[index].firstName} ${users[index].lastName}`">
                             <template #description>
                               <div class="flex items-center justify-center">
@@ -629,14 +606,6 @@ const onFinishFailed = (errorInfo: any) => {
                       <div v-else>
                         <a-badge-ribbon v-if="item.confirmed" class="mr-2" color="green" text="accepté">
                           <a-card class="mr-2" hoverable>
-                            <template v-if="item.confirmed == true" #actions>
-                              <span key="payment" class="i-carbon-purchase inline-block" @click="payment(item)" />
-                            </template>
-                            <template v-else #actions>
-                              <span key="accept" class="i-carbon-checkmark-outline inline-block" @click="acceptDevis(item)" />
-                              <span v-if="!sendRefuseDevis" key="refuse" class="i-carbon-misuse-outline inline-block" @click="refuseDevis(item)" />
-                              <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
-                            </template>
                             <a-card-meta :title="`Agence : ${users[index].nameAgence}`">
                               <template #description>
                                 <div class="flex items-center justify-center">
@@ -733,12 +702,6 @@ const onFinishFailed = (errorInfo: any) => {
                         </a-badge-ribbon>
                         <a-badge-ribbon v-else-if="item.confirmed == false" class="mr-2" color="red" text="refusé">
                           <a-card class="mr-2" hoverable>
-                            <template #actions>
-                              <span key="accept" class="i-carbon-checkmark-outline inline-block" @click="acceptDevis(item)" />
-
-                              <span v-if="!sendRefuseDevis" key="refuse" class="i-carbon-misuse-outline inline-block" @click="refuseDevis(item)" />
-                              <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
-                            </template>
                             <a-card-meta :title="`Agence : ${users[index].nameAgence}`">
                               <template #description>
                                 <div class="flex items-center justify-center">
@@ -823,12 +786,6 @@ const onFinishFailed = (errorInfo: any) => {
                           </a-card>
                         </a-badge-ribbon>
                         <a-card v-else class="mr-2" hoverable>
-                          <template #actions>
-                            <span key="accept" class="i-carbon-checkmark-outline inline-block" @click="acceptDevis(item)" />
-
-                            <span v-if="!sendRefuseDevis" key="refuse" class="i-carbon-misuse-outline inline-block" @click="refuseDevis(item)" />
-                            <span v-else key="green-spin" class="inline-block"><a-spin class="mx-auto" /></span>
-                          </template>
                           <a-card-meta :title="`Agence : ${users[index].nameAgence}`">
                             <template #description>
                               <div class="flex items-center justify-center">

@@ -5,11 +5,16 @@ import { Form, Modal, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
 import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
+import VuePdfEmbed from 'vue-pdf-embed'
 import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 
 import { api as apiServices } from '~/common/composables'
 const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
+
+const formStatePdf = reactive<Record<string, any>>({
+  url: '',
+})
 
 SwiperCore.use([Controller, Pagination])
 const controlledSwiper = ref(null)
@@ -81,6 +86,8 @@ const visibleModalInformationSignatureCharte = ref(false)
 const visibleModalGreenQuestion = ref(false)
 const visibleModalInformationValidated = ref(false)
 const profileEntrepriseLoading = ref(false)
+const visibleModalShowPdf = ref(false)
+
 const visibleModalUpdateDevis = ref(false)
 const showUpdateBloc = ref(false)
 const fileListKabisDocuments = ref([])
@@ -1175,7 +1182,10 @@ const rulesLegaleMention = reactive({
     },
   ],
 })
-
+const showPdf = (url: string) => {
+  formStatePdf.url = url
+  visibleModalShowPdf.value = true
+}
 const calcDisponibilityFreq = (params: number, toSlide = true) => {
   if (toSlide) {
     if (params === 0)
@@ -2216,7 +2226,19 @@ onMounted(async() => {
                                         à votre nouvelle situation.
                                       </b>
                                     </p>
-                                    <a-form-item label="Pièce d'identité (recto/verso)" />
+                                    <a-form-item label="Pièce d'identité (recto/verso)">
+                                      <br>
+                                      <div v-if="profile?.freelancer.documents[0]">
+                                        <vue-pdf-embed
+                                          :source="profile?.freelancer.documents[0]"
+                                          @click.prevent="showPdf(profile?.freelancer.documents[0])"
+                                        />
+                                      </div>
+                                      <div v-else>
+                                        <label>Pas encore téléchargé</label>
+                                      </div>
+                                      <br>
+                                    </a-form-item>
                                     <a-form-item :wrapper-col="{ span: 24, offset: 0 }">
                                       <a-button
                                         block
@@ -2332,58 +2354,34 @@ onMounted(async() => {
                                 </div>
                                 <div v-else-if="currentStepProfileEtprs === 4" class="">
                                   <div class="mb-3">
-                                    <a-upload
-                                      v-model:file-list="fileListKabisDocuments"
-                                      name="documents"
-                                      method="PATCH"
-                                      :action="`${BASE_PREFIX}/freelancer/kabis-documents/${props.id}`"
-                                      :headers="{token: token}"
-                                      @change="handleChangeDocuments"
-                                    >
-                                      <label v-if="formStateProfile.kabis && formStateProfile.kabis.length > 0">Document déja téléchargé </label>
-                                      <br>
-                                      <br>
-                                      <a-button>
-                                        <upload-outlined />
-                                        Télécharger votre kabis.
-                                      </a-button>
-                                    </a-upload>
+                                    <br>
+                                    <label v-if="formStateProfile.kabis && formStateProfile.kabis.length > 0">Document déja téléchargé </label>
+                                    <label v-else>Document non téléchargé </label>
+                                    <vue-pdf-embed
+                                      v-if="formStateProfile.kabis && formStateProfile.kabis.length > 0"
+                                      :source="formStateProfile.kabis"
+                                      @click.prevent="showPdf(formStateProfile.kabis)"
+                                    />
                                   </div>
                                   <div class="mb-3">
-                                    <a-upload
-                                      v-model:file-list="fileListVigilanceDocuments"
-                                      name="documents"
-                                      method="PATCH"
-                                      :action="`${BASE_PREFIX}/freelancer/vigilance-documents/${props.id}`"
-                                      :headers="{token: token}"
-                                      @change="handleChangeDocuments"
-                                    >
-                                      <label v-if="formStateProfile.vigilance && formStateProfile.vigilance.length > 0">Document déja téléchargé </label>
-                                      <br>
-                                      <br>
-                                      <a-button>
-                                        <upload-outlined />
-                                        Télécharger le document de vigilance.
-                                      </a-button>
-                                    </a-upload>
+                                    <br>
+                                    <label v-if="formStateProfile.vigilance && formStateProfile.vigilance.length > 0">Document déja téléchargé </label>
+                                    <label v-else>Document non téléchargé </label>
+                                    <vue-pdf-embed
+                                      v-if="formStateProfile.vigilance && formStateProfile.vigilance.length > 0"
+                                      :source="formStateProfile.vigilance"
+                                      @click.prevent="showPdf(formStateProfile.vigilance)"
+                                    />
                                   </div>
                                   <div class="mb-3">
-                                    <a-upload
-                                      v-model:file-list="fileListSasuDocuments"
-                                      name="documents"
-                                      method="PATCH"
-                                      :action="`${BASE_PREFIX}/freelancer/sasu-documents/${props.id}`"
-                                      :headers="{token: token}"
-                                      @change="handleChangeDocuments"
-                                    >
-                                      <label v-if="formStateProfile.sasu && formStateProfile.sasu.length > 0">Document déja téléchargé </label>
-                                      <br>
-                                      <br>
-                                      <a-button>
-                                        <upload-outlined />
-                                        Télécharger le SASU.
-                                      </a-button>
-                                    </a-upload>
+                                    <br>
+                                    <label v-if="formStateProfile.sasu && formStateProfile.sasu.length > 0">Document déja téléchargé </label>
+                                    <label v-else>Document non téléchargé </label>
+                                    <vue-pdf-embed
+                                      v-if="formStateProfile.vigilance && formStateProfile.sasu.length > 0"
+                                      :source="formStateProfile.sasu"
+                                      @click.prevent="showPdf(formStateProfile.sasu)"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -3627,11 +3625,36 @@ onMounted(async() => {
       </a-button>
     </template>
   </a-modal>
+  <a-modal
+    v-model:visible="visibleModalShowPdf"
+    width="80%"
+    title="Document :"
+    @ok="() => { }"
+  >
+    <div>
+      <vue-pdf-embed
+        :source="formStatePdf.url"
+      />
+    </div>
+    <template #footer>
+      <a-button type="primary" @click.prevent="onSubmitCert">
+        Modifier
+      </a-button>
+      <a-button style="margin-left: 10px" @click="resetFieldsCertification">
+        Réinitialiser
+      </a-button>
+    </template>
+  </a-modal>
 </template>
 <style lang="less">
 .swiper-wrapper {
   display: flex;
 }
+.vue-pdf-embed > div {
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px 4px rgba(0, 0, 0, 0.1);
+}
+
 .ant-tabs-tab {
   @apply px-4;
 }

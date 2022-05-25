@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
-// import Cloudinary, { CldContext, CldImage, CldTransformation } from 'cloudinary-vue'
 import dayjs, { Dayjs } from 'dayjs'
 import { Form, Modal, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
 import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-// import { createApp } from 'vue'
-import App from './[id].vue'
+import VuePdfEmbed from 'vue-pdf-embed'
 import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 import { api as apiServices } from '~/common/composables'
 const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
 
+const formStatePdf = reactive<Record<string, any>>({
+  url: '',
+})
+const visibleModalShowPdf = ref(false)
+const showPdf = (url: string) => {
+  formStatePdf.url = url
+  visibleModalShowPdf.value = true
+}
 const useForm = Form.useForm
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -2035,39 +2041,17 @@ onMounted(async() => {
                                       </b>
                                     </p>
                                     <a-form-item label="Pièce d'identité (recto/verso)">
-                                      <a-form-item name="dragger" no-style>
-                                        <a-upload-dragger
-                                          name="files" :file-list="profile?.agence?.documents.map(f => ({
-                                            uid: f.uid || f,
-                                            name: f.name || f,
-                                            status: f.status || 'done',
-                                            url: f,
-                                          })) || []" :before-upload="(file: any) => {
-                                            if (file.type === 'application/pdf') {
-                                              userDocument = file;
-                                            }
-                                            else {
-                                              message.error('type should be pdf')
-                                            }
-                                            return false;
-                                          }"
-                                        >
-                                          <template v-if="!userDocument">
-                                            <p class="ant-upload-drag-icon">
-                                              <span class="i-carbon-cloud-upload inline-block text-xl" />
-                                            </p>
-                                            <p class="ant-upload-text">
-                                              Click or drag file to this area to upload
-                                            </p>
-                                            <p class="ant-upload-hint">
-                                              Support for a single or bulk upload.
-                                            </p>
-                                          </template>
-                                          <template v-else>
-                                            <p>{{ userDocument?.name }}</p>
-                                          </template>
-                                        </a-upload-dragger>
-                                      </a-form-item>
+                                      <br>
+                                      <div v-if="profile?.agence.documents[0]">
+                                        <vue-pdf-embed
+                                          :source="profile?.agence.documents[0]"
+                                          @click.prevent="showPdf(profile?.agence.documents[0])"
+                                        />
+                                      </div>
+                                      <div v-else>
+                                        <label>Pas encore téléchargé</label>
+                                      </div>
+                                      <br>
                                     </a-form-item>
                                     <a-form-item :wrapper-col="{ span: 24, offset: 0 }">
                                       <a-button
@@ -2173,58 +2157,34 @@ onMounted(async() => {
                                 </div>
                                 <div v-else-if="currentStepProfileEtprs === 4" class="">
                                   <div class="mb-3">
-                                    <a-upload
-                                      v-model:file-list="fileListKabisDocuments"
-                                      name="documents"
-                                      method="PATCH"
-                                      :action="`${BASE_PREFIX}/agence/kabis-documents/${props.id}`"
-                                      :headers="{token: token}"
-                                      @change="handleChangeDocuments"
-                                    >
-                                      <label v-if="formStateProfile.kabis && formStateProfile.kabis.length > 0">Document déja téléchargé </label>
-                                      <br>
-                                      <br>
-                                      <a-button>
-                                        <upload-outlined />
-                                        Télécharger votre Kbis.
-                                      </a-button>
-                                    </a-upload>
+                                    <br>
+                                    <label v-if="formStateProfile.kabis && formStateProfile.kabis.length > 0">Document déja téléchargé </label>
+                                    <label v-else>Document non téléchargé </label>
+                                    <vue-pdf-embed
+                                      v-if="formStateProfile.kabis && formStateProfile.kabis.length > 0"
+                                      :source="formStateProfile.kabis"
+                                      @click.prevent="showPdf(formStateProfile.kabis)"
+                                    />
                                   </div>
                                   <div class="mb-3">
-                                    <a-upload
-                                      v-model:file-list="fileListVigilanceDocuments"
-                                      name="documents"
-                                      method="PATCH"
-                                      :action="`${BASE_PREFIX}/agence/vigilance-documents/${props.id}`"
-                                      :headers="{token: token}"
-                                      @change="handleChangeDocuments"
-                                    >
-                                      <label v-if="formStateProfile.vigilance && formStateProfile.vigilance.length > 0">Document déja téléchargé </label>
-                                      <br>
-                                      <br>
-                                      <a-button>
-                                        <upload-outlined />
-                                        Télécharger le document de vigilance.
-                                      </a-button>
-                                    </a-upload>
+                                    <br>
+                                    <label v-if="formStateProfile.vigilance && formStateProfile.vigilance.length > 0">Document déja téléchargé </label>
+                                    <label v-else>Document non téléchargé </label>
+                                    <vue-pdf-embed
+                                      v-if="formStateProfile.vigilance && formStateProfile.vigilance.length > 0"
+                                      :source="formStateProfile.vigilance"
+                                      @click.prevent="showPdf(formStateProfile.vigilance)"
+                                    />
                                   </div>
                                   <div class="mb-3">
-                                    <a-upload
-                                      v-model:file-list="fileListSasuDocuments"
-                                      name="documents"
-                                      method="PATCH"
-                                      :action="`${BASE_PREFIX}/agence/sasu-documents/${props.id}`"
-                                      :headers="{token: token}"
-                                      @change="handleChangeDocuments"
-                                    >
-                                      <label v-if="formStateProfile.sasu && formStateProfile.sasu.length > 0">Document déja téléchargé </label>
-                                      <br>
-                                      <br>
-                                      <a-button>
-                                        <upload-outlined />
-                                        Télécharger le SASU.
-                                      </a-button>
-                                    </a-upload>
+                                    <br>
+                                    <label v-if="formStateProfile.sasu && formStateProfile.sasu.length > 0">Document déja téléchargé </label>
+                                    <label v-else>Document non téléchargé </label>
+                                    <vue-pdf-embed
+                                      v-if="formStateProfile.sasu && formStateProfile.sasu.length > 0"
+                                      :source="formStateProfile.sasu"
+                                      @click.prevent="showPdf(formStateProfile.sasu)"
+                                    />
                                   </div>
                                 </div>
                               </div>
