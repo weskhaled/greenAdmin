@@ -35,6 +35,7 @@ const columns = ref([
     dataIndex: 'username',
     key: 'username',
     sorter: true,
+    align: 'center',
   },
   {
     title: 'Date',

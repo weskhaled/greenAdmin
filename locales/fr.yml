@@ -33,6 +33,9 @@ sidebarMenu:
     jobs:
       parent: Catégories de métiers
       index: Métiers
+    subscriptions:
+      parent: Abonnements
+      index: Abonnements
     posts:
       parent: Articles
       index: Articles

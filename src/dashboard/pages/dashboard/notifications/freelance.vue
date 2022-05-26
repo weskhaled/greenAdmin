@@ -35,6 +35,7 @@ const columns = ref([
     dataIndex: 'username',
     key: 'username',
     sorter: true,
+    align: 'center',
   },
   {
     title: 'Date',
@@ -92,7 +93,6 @@ const validateOrUnvalidateNotif = async(notification) => {
   }
 }
 const filterDate = async() => {
-  console.log('in filter')
   dataAdmins.value.filter(
     j => j.date >= formStatePeriod.dateBegin && j.date >= formStatePeriod.dateEnd,
   )

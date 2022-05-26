@@ -24,18 +24,21 @@ const columns = ref([
     dataIndex: 'username',
     key: 'username',
     sorter: true,
+    align: 'center',
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
     sorter: true,
+    align: 'center',
   },
   {
     title: 'Visibilité',
     dataIndex: 'visibility',
     key: 'visibility',
     sorter: true,
+    align: 'center',
     filters: [
       { text: 'Visible', value: 'true' },
       { text: 'Invisible', value: 'false' },
@@ -45,11 +48,13 @@ const columns = ref([
     title: 'Création',
     dataIndex: 'createdAt',
     key: 'createdAt',
+    align: 'center',
     sorter: true,
   },
   {
     title: 'Rôle',
     dataIndex: 'role',
+    align: 'center',
     key: 'role',
   },
   {
@@ -122,40 +127,9 @@ const deleteUser = async(userId) => {
             </a-tooltip>
           </template>
         </a-input-search>
-        <!--
-        <a-button key="2">
-          Operation
-        </a-button>
-        -->
         <a-button key="1" type="primary" @click="() => { selectedUser = null, visibleUserFormModal = true }">
           Ajouter un Admin
         </a-button>
-        <!--
-        <a-dropdown key="more">
-          <a-button class="!border-none !px-1" type="link">
-            <span class="i-carbon-overflow-menu-horizontal inline-block anticon text-lg !align-top" />
-          </a-button>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-                  1st menu item
-                </a>
-              </a-menu-item>
-              <a-menu-item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-                  2nd menu item
-                </a>
-              </a-menu-item>
-              <a-menu-item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-                  3rd menu item
-                </a>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
-        -->
       </template>
     </a-page-header>
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
