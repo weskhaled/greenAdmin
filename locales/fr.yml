@@ -41,10 +41,14 @@ sidebarMenu:
       index: Compétences
     notifications:
       parent: Notifications
-      posts: notifications posts
-      editors: notifications éditeurs
-      freelance: notifications freelance
-      agence: notifications solutions innovantes
+      posts: Articles
+      editors: Editeurs
+      freelance: Freelance
+      agence: Solutions innovantes
+      company: Entreprises
+    logs:
+      parent: Journalisations
+      index: Journalisations
     settings:
       parent: Settings
       index: Account Settings
