@@ -17,8 +17,8 @@ interface FormState {
   password: string
 }
 const formState = reactive<FormState>({
-  username: 'root',
-  password: 'azerty',
+  username: '',
+  password: '',
 })
 const onFinish = async(values: any) => {
   loginLoading.value = true
@@ -53,6 +53,8 @@ const disabled = computed(() => {
             <div class="absolute top-2 right-2">
               <DarkSwitch />
             </div>
+            <img aria-hidden="true" src="./Green_positive.png" alt="Office">
+
             <h1 class="mb-4 text-3xl font-semibold text-green-900 !dark:text-green-100">
               Login
             </h1>
@@ -66,9 +68,9 @@ const disabled = computed(() => {
                 @finish-failed="onFinishFailed"
               >
                 <a-form-item
-                  label="Username"
+                  label="Identifiant"
                   name="username"
-                  :rules="[{ required: true, message: 'Please input your username!' }]"
+                  :rules="[{ required: true, message: 'Veuillez saisir votre identifiant !' }]"
                 >
                   <a-input v-model:value="formState.username" size="large">
                     <template #prefix>
@@ -78,9 +80,9 @@ const disabled = computed(() => {
                 </a-form-item>
 
                 <a-form-item
-                  label="Password"
+                  label="Mot de passe"
                   name="password"
-                  :rules="[{ required: true, message: 'Please input your password!' }]"
+                  :rules="[{ required: true, message: 'Veuillez saisir votre mot de passe !' }]"
                 >
                   <a-input-password v-model:value="formState.password" size="large">
                     <template #prefix>
@@ -88,7 +90,7 @@ const disabled = computed(() => {
                     </template>
                   </a-input-password>
                 </a-form-item>
-
+                <!--
                 <div class="login-form-wrap">
                   <a-form-item name="remember" no-style>
                     <a-checkbox>
@@ -97,12 +99,12 @@ const disabled = computed(() => {
                       </span>
                     </a-checkbox>
                   </a-form-item>
-                  <a class="login-form-forgot" href="">Forgot password</a>
+                  <a class="login-form-forgot" href="">M</a>
                 </div>
-
+-->
                 <a-form-item class="!my-2">
                   <a-button :loading="loginLoading" size="large" block :disabled="disabled" type="primary" html-type="submit" class="">
-                    Log in
+                    Connexion
                   </a-button>
                 </a-form-item>
               </a-form>

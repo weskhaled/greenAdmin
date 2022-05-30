@@ -93,10 +93,18 @@ const validateOrUnvalidateNotif = async(notification) => {
   }
 }
 const filterDate = async() => {
-  console.log('in filter')
-  dataAdmins.value.filter(
-    j => j.date >= formStatePeriod.dateBegin && j.date >= formStatePeriod.dateEnd,
-  )
+  const params = { dateBegin: formStatePeriod.dateBegin, dateEnd: formStatePeriod.dateEnd }
+
+  const { data: datePeriod, error } = await apiServices('/notification-posts/period').post(params).json()
+
+  if (datePeriod.value && !error.value)
+    dataAdmins.value = datePeriod.value
+}
+const resetData = async() => {
+  formStatePeriod.dateBegin = null
+  formStatePeriod.dateEnd = null
+
+  getNotifs()
 }
 </script>
 
@@ -128,20 +136,9 @@ const filterDate = async() => {
         >
           <span class="i-carbon-search inline-block" />
         </a-button>
-        <a-input-search
-          v-model:value="search" allow-clear placeholder="rechercher :" :loading="!dataAdmins"
-          :disabled="!search.length && dataAdmins && dataAdmins.length === 0" enter-button class="!w-55"
-        >
-          <template v-if="false" #suffix>
-            <a-tooltip title="scroll to device">
-              <a-button type="link" size="small">
-                <template #icon>
-                  <span class="i-carbon-auto-scroll anticon block text-sm text-opacity-10" />
-                </template>
-              </a-button>
-            </a-tooltip>
-          </template>
-        </a-input-search>
+        <a-button key="1" type="primary" @click="() => resetData()">
+          Réinitialiser
+        </a-button>
       </template>
     </a-page-header>
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
@@ -156,7 +153,7 @@ const filterDate = async() => {
             {{ dayjs(text).format('DD/MM/YYYY HH:mm') }}
           </template>
           <template v-if="column.dataIndex === 'date'">
-            {{ dayjs(text).format('DD/MM/YYYY HH:mm') }}
+            {{ dayjs(text).format('DD/MM/YYYY') }}
           </template>
           <template v-if="column.key === 'operation'">
             <a-button
