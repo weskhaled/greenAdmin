@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
+import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { SearchOutlined } from '@ant-design/icons-vue'
+import type { TableColumnsType } from 'ant-design-vue'
 import { api as apiServices } from '~/common/composables'
 
 const search = ref('')
@@ -17,33 +20,58 @@ const routes = [
   },
 ]
 const dataSubs = ref<any>(null)
-const columns = ref([
+const state = reactive({
+  searchText: '',
+  searchedColumn: '',
+})
+
+const searchInput = ref()
+const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  confirm()
+  state.searchText = selectedKeys[0]
+  state.searchedColumn = dataIndex
+}
+
+const handleReset = (clearFilters) => {
+  clearFilters({ confirm: true })
+  state.searchText = ''
+}
+
+const columns: TableColumnsType = [
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
-    sorter: true,
-    align: 'center',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.email.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Activité',
     dataIndex: 'active',
     key: 'active',
-    sorter: true,
     filters: [
-      { text: 'Oui', value: 'true' },
-      { text: 'Non', value: 'false' },
+      { text: 'Oui', value: true },
+      { text: 'Non', value: false },
     ],
     align: 'center',
+    onFilter: (value, record) =>
+      record.active === value,
   },
   {
     title: 'Création',
     dataIndex: 'createdAt',
     key: 'createdAt',
-    sorter: true,
     align: 'center',
   },
-])
+]
 const getSubs = async() => {
   const { data, error } = await apiServices('/subscriptions/').json()
   data && !error.value && (dataSubs.value = data.value)
@@ -64,26 +92,26 @@ onMounted(() => {
           Running
         </a-tag>
       </template>
-      <template #extra>
-        <a-input-search
-          v-model:value="search" allow-clear placeholder="rechercher :" :loading="!dataSubs"
-          :disabled="!search.length && dataSubs && dataSubs.length === 0" enter-button class="!w-55"
-        >
-          <template v-if="false" #suffix>
-            <a-tooltip title="scroll to device">
-              <a-button type="link" size="small">
-                <template #icon>
-                  <span class="i-carbon-auto-scroll anticon block text-sm text-opacity-10" />
-                </template>
-              </a-button>
-            </a-tooltip>
-          </template>
-        </a-input-search>
-      </template>
     </a-page-header>
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
       <a-table :loading="!dataSubs" size="small" :data-source="dataSubs || []" :columns="columns">
         <template #bodyCell="{ record, column, text }">
+          <span v-if="searchText && searchedColumn === column.dataIndex">
+            <template
+              v-for="(fragment, i) in text
+                .toString()
+                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+            >
+              <mark
+                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                :key="i"
+                class="highlight"
+              >
+                {{ fragment }}
+              </mark>
+              <template v-else>{{ fragment }}</template>
+            </template>
+          </span>
           <template v-if="column.dataIndex === 'active'">
             <a-tag v-if="text === true" color="green">
               Oui
@@ -95,6 +123,33 @@ onMounted(() => {
           <template v-if="column.dataIndex === 'createdAt'">
             {{ dayjs(text).format('DD/MM/YYYY HH:mm') }}
           </template>
+        </template>
+        <template
+          #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+        >
+          <div style="padding: 8px">
+            <a-input
+              ref="searchInput"
+              :placeholder="`Search ${column.dataIndex}`"
+              :value="selectedKeys[0]"
+              style="width: 188px; margin-bottom: 8px; display: block"
+              @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+              @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+            />
+            <a-button
+              type="primary"
+              size="small"
+              style="width: 90px; margin-right: 8px"
+              @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+            >
+              <template #icon>
+                <SearchOutlined />
+              </template>
+            </a-button>
+            <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+              Initialiser
+            </a-button>
+          </div>
         </template>
       </a-table>
     </div>

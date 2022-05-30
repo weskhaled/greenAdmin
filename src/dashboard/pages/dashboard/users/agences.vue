@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
+import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { SearchOutlined } from '@ant-design/icons-vue'
+import type { TableColumnsType } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { api as apiServices } from '~/common/composables'
 
@@ -19,83 +22,131 @@ const routes = [
   },
 ]
 const dataUsers = ref<any>(null)
-const columns = ref([
+const state = reactive({
+  searchText: '',
+  searchedColumn: '',
+})
+
+const searchInput = ref()
+const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  confirm()
+  state.searchText = selectedKeys[0]
+  state.searchedColumn = dataIndex
+}
+
+const handleReset = (clearFilters) => {
+  clearFilters({ confirm: true })
+  state.searchText = ''
+}
+
+const columns: TableColumnsType = [
   {
     title: 'Solution Innovante',
     dataIndex: 'nameAgence',
     key: 'nameAgence',
-    sorter: true,
     align: 'center',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.nameAgence.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
-    sorter: true,
     align: 'center',
-
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.email.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Visibilité',
     dataIndex: 'visibility',
     key: 'visibility',
-    sorter: true,
     filters: [
-      { text: 'Visible', value: 'true' },
-      { text: 'Invisible', value: 'false' },
+      { text: 'Visible', value: 1 },
+      { text: 'Invisible', value: 0 },
     ],
     align: 'center',
+    onFilter: (value, record) =>
+      record.visibility === value,
   },
   {
     title: 'Tel.',
     dataIndex: 'phone',
     key: 'phone',
-    sorter: true,
     align: 'center',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.phone.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Verif. email',
     dataIndex: 'email_verification',
     key: 'email_verification',
-    sorter: true,
     filters: [
-      { text: 'Oui', value: 'true' },
-      { text: 'Non', value: 'false' },
+      { text: 'Oui', value: 1 },
+      { text: 'Non', value: 0 },
     ],
     align: 'center',
+    onFilter: (value, record) =>
+      record.email_verification === value,
   },
   {
     title: 'Val. Doc.',
     dataIndex: 'documents_val',
     key: 'documents_val',
-    sorter: true,
     filters: [
-      { text: 'Oui', value: 'true' },
-      { text: 'Non', value: 'false' },
+      { text: 'Oui', value: true },
+      { text: 'Non', value: false },
     ],
     align: 'center',
+    onFilter: (value, record) =>
+      record.documents_val === value,
   },
   {
     title: 'Validation',
     dataIndex: 'validated',
     key: 'validated',
-    sorter: true,
     filters: [
-      { text: 'Oui', value: 'true' },
-      { text: 'Non', value: 'false' },
+      { text: 'Oui', value: true },
+      { text: 'Non', value: false },
     ],
     align: 'center',
+    onFilter: (value, record) =>
+      record.validated === value,
   },
   {
     title: 'Confidentialité',
     dataIndex: 'confidentiality',
     key: 'confidentiality',
-    sorter: true,
     filters: [
-      { text: 'Oui', value: 'true' },
-      { text: 'Non', value: 'false' },
+      { text: 'Oui', value: true },
+      { text: 'Non', value: false },
     ],
     align: 'center',
+    onFilter: (value, record) =>
+      record.validated === value,
   },
   {
     title: 'Création',
@@ -110,7 +161,7 @@ const columns = ref([
     width: 200,
     align: 'center',
   },
-])
+]
 const getUsers = async() => {
   const { data, error } = await apiServices('/agence/all').json()
   data && !error.value && (dataUsers.value = data.value)
@@ -170,26 +221,26 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
           Running
         </a-tag>
       </template>
-      <template #extra>
-        <a-input-search
-          v-model:value="search" allow-clear placeholder="rechercher :" :loading="!dataUsers"
-          :disabled="!search.length && dataUsers && dataUsers.length === 0" enter-button class="!w-55"
-        >
-          <template v-if="false" #suffix>
-            <a-tooltip title="scroll to device">
-              <a-button type="link" size="small">
-                <template #icon>
-                  <span class="i-carbon-auto-scroll anticon block text-sm text-opacity-10" />
-                </template>
-              </a-button>
-            </a-tooltip>
-          </template>
-        </a-input-search>
-      </template>
     </a-page-header>
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
       <a-table :loading="!dataUsers" size="small" :data-source="dataUsers || []" :columns="columns">
         <template #bodyCell="{ record, column, text }">
+          <span v-if="searchText && searchedColumn === column.dataIndex">
+            <template
+              v-for="(fragment, i) in text
+                .toString()
+                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+            >
+              <mark
+                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                :key="i"
+                class="highlight"
+              >
+                {{ fragment }}
+              </mark>
+              <template v-else>{{ fragment }}</template>
+            </template>
+          </span>
           <template v-if="column.dataIndex === 'visibility'">
             <a-tag :color="text === 1 ? 'green' : 'red'">
               {{ text === 1 ? 'visible' : 'invisible' }}
@@ -253,6 +304,33 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
             </a-popconfirm>
           </template>
         </template>
+        <template
+          #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+        >
+          <div style="padding: 8px">
+            <a-input
+              ref="searchInput"
+              :placeholder="`Search ${column.dataIndex}`"
+              :value="selectedKeys[0]"
+              style="width: 188px; margin-bottom: 8px; display: block"
+              @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+              @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+            />
+            <a-button
+              type="primary"
+              size="small"
+              style="width: 90px; margin-right: 8px"
+              @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+            >
+              <template #icon>
+                <SearchOutlined />
+              </template>
+            </a-button>
+            <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+              Initialiser
+            </a-button>
+          </div>
+        </template>
       </a-table>
     </div>
   </div>
@@ -286,6 +364,6 @@ meta:
     name: dashboard.users.agences
     link: dashboard-users-agences
     classes: test for classes
-    icon: i-carbon-user-role
+    icon: i-carbon-events
     childOf: dashboard-users-freelancers
 </route>

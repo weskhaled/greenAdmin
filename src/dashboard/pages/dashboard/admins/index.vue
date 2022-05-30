@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
+import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { SearchOutlined } from '@ant-design/icons-vue'
+import type { TableColumnsType } from 'ant-design-vue'
 import { api as apiServices } from '~/common/composables'
 import { currentUser } from '~/common/stores'
 
-const search = ref('')
 const selectedUser = ref(null)
 const visibleUserFormModal = ref(false)
 const routes = [
@@ -18,31 +20,67 @@ const routes = [
   },
 ]
 const dataUsers = ref<any>(null)
-const columns = ref([
+const state = reactive({
+  searchText: '',
+  searchedColumn: '',
+})
+
+const searchInput = ref()
+const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  confirm()
+  state.searchText = selectedKeys[0]
+  state.searchedColumn = dataIndex
+}
+
+const handleReset = (clearFilters) => {
+  clearFilters({ confirm: true })
+  state.searchText = ''
+}
+
+const columns: TableColumnsType = [
   {
     title: 'Utilisateur',
     dataIndex: 'username',
     key: 'username',
-    sorter: true,
     align: 'center',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.username.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
-    sorter: true,
     align: 'center',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.email.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Visibilité',
     dataIndex: 'visibility',
     key: 'visibility',
-    sorter: true,
     align: 'center',
     filters: [
-      { text: 'Visible', value: 'true' },
-      { text: 'Invisible', value: 'false' },
+      { text: 'Visible', value: 1 },
+      { text: 'Invisible', value: 0 },
     ],
+    onFilter: (value, record) =>
+      record.visibility === value,
   },
   {
     title: 'Création',
@@ -56,6 +94,16 @@ const columns = ref([
     dataIndex: 'role',
     align: 'center',
     key: 'role',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>
+      record.role.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus()
+        }, 100)
+      }
+    },
   },
   {
     title: 'Actions',
@@ -64,7 +112,7 @@ const columns = ref([
     width: 200,
     align: 'center',
   },
-])
+]
 const getUsers = async() => {
   const { data, error } = await apiServices('/admin/').json()
   data && !error.value && (dataUsers.value = data.value)
@@ -113,20 +161,6 @@ const deleteUser = async(userId) => {
         </a-tag>
       </template>
       <template #extra>
-        <a-input-search
-          v-model:value="search" allow-clear placeholder="rechercher :" :loading="!dataUsers"
-          :disabled="!search.length && dataUsers && dataUsers.length === 0" enter-button class="!w-55"
-        >
-          <template v-if="false" #suffix>
-            <a-tooltip title="scroll to device">
-              <a-button type="link" size="small">
-                <template #icon>
-                  <span class="i-carbon-auto-scroll anticon block text-sm text-opacity-10" />
-                </template>
-              </a-button>
-            </a-tooltip>
-          </template>
-        </a-input-search>
         <a-button key="1" type="primary" @click="() => { selectedUser = null, visibleUserFormModal = true }">
           Ajouter un Admin
         </a-button>
@@ -135,6 +169,22 @@ const deleteUser = async(userId) => {
     <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
       <a-table :loading="!dataUsers" size="small" :data-source="dataUsers || []" :columns="columns">
         <template #bodyCell="{ record, column, text }">
+          <span v-if="searchText && searchedColumn === column.dataIndex">
+            <template
+              v-for="(fragment, i) in text
+                .toString()
+                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+            >
+              <mark
+                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                :key="i"
+                class="highlight"
+              >
+                {{ fragment }}
+              </mark>
+              <template v-else>{{ fragment }}</template>
+            </template>
+          </span>
           <template v-if="column.dataIndex === 'visibility'">
             <a-tag :color="text === 1 ? 'green' : 'red'">
               {{ text === 1 ? 'visible' : 'invisible' }}
@@ -156,6 +206,33 @@ const deleteUser = async(userId) => {
               </a-button>
             </a-popconfirm>
           </template>
+        </template>
+        <template
+          #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+        >
+          <div style="padding: 8px">
+            <a-input
+              ref="searchInput"
+              :placeholder="`Search ${column.dataIndex}`"
+              :value="selectedKeys[0]"
+              style="width: 188px; margin-bottom: 8px; display: block"
+              @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+              @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+            />
+            <a-button
+              type="primary"
+              size="small"
+              style="width: 90px; margin-right: 8px"
+              @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+            >
+              <template #icon>
+                <SearchOutlined />
+              </template>
+            </a-button>
+            <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+              Initialiser
+            </a-button>
+          </div>
         </template>
       </a-table>
     </div>
