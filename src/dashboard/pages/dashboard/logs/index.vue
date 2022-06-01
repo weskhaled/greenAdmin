@@ -63,7 +63,7 @@ const checkOrUncheckLog = async(logId, checked) => {
     getLogs()
   }
   else {
-    const { data: checkLog, error } = await apiServices(`/logs/uncheck/${logId}`).patch().json()
+    const { data: checkLog, error } = await apiServices(`/logs/check/${logId}`).patch().json()
     checkLog.value && !error.value && (message.success(checkLog.value?.message))
     getLogs()
   }
