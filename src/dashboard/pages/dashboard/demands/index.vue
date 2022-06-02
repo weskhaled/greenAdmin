@@ -210,4 +210,5 @@ meta:
     classes: test for classes
     icon: i-carbon:ticket
     childOf: null
+    roles: [Root, Admin]
 </route>

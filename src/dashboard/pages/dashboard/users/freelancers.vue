@@ -5,8 +5,9 @@ import { defineComponent, reactive, ref, toRefs } from 'vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { api as apiServices } from '~/common/composables'
+import { currentUser } from '~/common/stores'
 
-const search = ref('')
+const searchText = ref('')
 const router = useRouter()
 
 const selectedUser = ref(null)
@@ -310,7 +311,7 @@ const validateOrUnvalidateUser = async(userId, doc_validated) => {
             >
               <span class="i-carbon-edit inline-block" />
             </a-button>
-            <a-popconfirm title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="blockOrUnblockUser(record._id,record.validated)">
+            <a-popconfirm v-if="currentUser && currentUser.role === 'Root'" title="êtes vous sûr ?" ok-text="Oui" cancel-text="Non" @confirm="blockOrUnblockUser(record._id,record.validated)">
               <a-button v-if="text.validated == true" size="small" class="mr-1 inline-block" type="link" warn>
                 <span class="i-carbon-locked inline-block" />
               </a-button>
@@ -397,4 +398,5 @@ meta:
     classes: test for classes
     icon: i-carbon-events
     childOf: null
+    roles: [Root, Admin]
 </route>

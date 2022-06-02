@@ -247,9 +247,9 @@ meta:
   siderMenu:
     name: dashboard.notifications.posts
     index: 1
-    parentName: dashboard.notifications.parent
     link: dashboard-notifications-posts
     classes: test for classes
     icon: i-carbon-notification
-    childOf: null
+    childOf: dashboard-notifications-editors
+    roles: [Root, Admin]
 </route>

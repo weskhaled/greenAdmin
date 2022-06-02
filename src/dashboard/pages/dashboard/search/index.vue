@@ -762,4 +762,5 @@ meta:
     classes: test for classes
     icon: i-carbon:notebook-reference
     childOf: null
+    roles: [Root, Admin]
 </route>

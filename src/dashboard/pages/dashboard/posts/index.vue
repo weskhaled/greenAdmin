@@ -298,4 +298,5 @@ meta:
     classes: test for classes
     icon: i-carbon:blog
     childOf: null
+    roles: [Root, Admin, Editor]
 </route>

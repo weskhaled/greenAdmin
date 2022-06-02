@@ -19,6 +19,8 @@ declare module '@vue/runtime-core' {
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
+    AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
+    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     ALayout: typeof import('ant-design-vue/es')['Layout']
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent']
     ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader']
@@ -33,6 +35,8 @@ declare module '@vue/runtime-core' {
     AResult: typeof import('ant-design-vue/es')['Result']
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
+    ASlider: typeof import('ant-design-vue/es')['Slider']
+    ASpin: typeof import('ant-design-vue/es')['Spin']
     AStep: typeof import('ant-design-vue/es')['Step']
     ASteps: typeof import('ant-design-vue/es')['Steps']
     ASwitch: typeof import('ant-design-vue/es')['Switch']
@@ -58,7 +62,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SkillFormModal: typeof import('./dashboard/pages/dashboard/skills/components/SkillFormModal.vue')['default']
-    SocialMedia: typeof import('./dashboard/pages/dashboard/users/agence/components/SocialMedia.vue')['default']
+    SocialMedia: typeof import('./dashboard/pages/dashboard/users/components/SocialMedia.vue')['default']
     UserFormModal: typeof import('./dashboard/pages/dashboard/users/components/UserFormModal.vue')['default']
   }
 }

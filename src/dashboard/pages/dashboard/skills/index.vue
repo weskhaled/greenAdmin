@@ -205,4 +205,5 @@ meta:
     classes: test for classes
     icon: i-carbon:skill-level-basic
     childOf: null
+    roles: [Root, Admin]
 </route>

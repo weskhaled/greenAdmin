@@ -271,4 +271,5 @@ meta:
     classes: test for classes
     icon: i-ph-users-duotone
     childOf: null
+    roles: [Root]
 </route>

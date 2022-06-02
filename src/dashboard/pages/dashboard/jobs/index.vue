@@ -203,4 +203,5 @@ meta:
     classes: test for classes
     icon: i-carbon:industry
     childOf: null
+    roles: [Root, Admin]
 </route>

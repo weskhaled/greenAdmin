@@ -18,6 +18,10 @@ export default defineConfig({
     presetUno(),
     presetAttributify(),
     presetIcons({
+      collections: {
+        carbon: () => import('@iconify-json/carbon/icons.json').then(i => i.default),
+        ph: () => import('@iconify-json/ph/icons.json').then(i => i.default),
+      },
       scale: 1.2,
       warn: true,
     }),
