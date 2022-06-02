@@ -9,7 +9,6 @@ import VuePdfEmbed from 'vue-pdf-embed'
 import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 import { api as apiServices } from '~/common/composables'
-const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
 
 const formStatePdf = reactive<Record<string, any>>({
   url: '',
@@ -1353,6 +1352,18 @@ const onFinishFailed = (errorInfo: any) => {
 onMounted(async() => {
   getFormData()
 })
+const validateOrUnvalidateOffer = async(offer: any) => {
+  if (offer.documents_val) {
+    const { data: docOffer, error } = await apiServices(`/agence/unvalidate-offer/${offer._id}`).patch().json()
+    docOffer.value && !error.value && (message.success(docOffer.value?.message))
+    getFormData()
+  }
+  else {
+    const { data: docOffer, error } = await apiServices(`/agence/validate-offer/${offer._id}`).patch().json()
+    docOffer.value && !error.value && (message.success(docOffer.value?.message))
+    getFormData()
+  }
+}
 </script>
 
 <template>
@@ -1789,6 +1800,14 @@ onMounted(async() => {
                               <span
                                 key="setting" class="i-ant-design-edit-outlined inline-block"
                                 @click="updateOffer(item)"
+                              />
+                              <span
+                                v-if="item.documents_val == false" key="validate" class="i-carbon-checkmark-outline inline-block"
+                                @click="validateOrUnvalidateOffer(item)"
+                              />
+                              <span
+                                v-else key="unvalidate" class="i-carbon-misuse-outline inline-block"
+                                @click="validateOrUnvalidateOffer(item)"
                               />
                             </template>
                             <a-card-meta :title="item.title">
