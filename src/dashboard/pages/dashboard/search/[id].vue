@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
-import dayjs, { Dayjs } from 'dayjs'
-import { Form, Modal, message } from 'ant-design-vue'
+import { Form, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
-import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
+import SwiperCore, { Controller, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 
 import { api as apiServices } from '~/common/composables'
-const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
 
 const controlledSwiper = ref(null)
 const offerSwiper = ref(null)

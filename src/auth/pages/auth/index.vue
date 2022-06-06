@@ -1,11 +1,8 @@
 <script setup lang="ts">
-// import service from '~/common/services/http'
-import { message } from 'ant-design-vue'
 import { token } from '~/common/stores'
 import { api as apiServices } from '~/common/composables'
 
 const router = useRouter()
-const { t } = useI18n()
 
 const loginLoading = ref(false)
 onMounted(() => {

@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { defineComponent, reactive, ref, toRefs } from 'vue'
-import { SearchOutlined } from '@ant-design/icons-vue'
+import { reactive, ref } from 'vue'
 import type { TableColumnsType } from 'ant-design-vue'
+import { SearchOutlined } from '@ant-design/icons-vue'
 import { api as apiServices } from '~/common/composables'
 
 const router = useRouter()
-const search = ref('')
-const props = defineProps<{ id: string }>()
+const searchText = ref('')
 
 const routes = [
   {
@@ -210,4 +208,5 @@ meta:
     classes: test for classes
     icon: i-carbon:ticket
     childOf: null
+    roles: [Root, Admin]
 </route>

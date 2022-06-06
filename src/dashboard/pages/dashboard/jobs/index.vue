@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
-import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { reactive, ref } from 'vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
 import { api as apiServices } from '~/common/composables'
 
-const search = ref('')
+const searchText = ref('')
 const selectedJob = ref(null)
 const visibleJobFormModal = ref(false)
 const routes = [
@@ -203,4 +203,5 @@ meta:
     classes: test for classes
     icon: i-carbon:industry
     childOf: null
+    roles: [Root, Admin]
 </route>

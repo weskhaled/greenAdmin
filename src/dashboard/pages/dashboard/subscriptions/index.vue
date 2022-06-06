@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { reactive, ref } from 'vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { api as apiServices } from '~/common/composables'
 
-const search = ref('')
-const selectedSub = ref(null)
-const visibleJobFormModal = ref(false)
+const searchText = ref('')
 const routes = [
   {
     path: 'dashboard-index',
@@ -183,4 +180,5 @@ meta:
     classes: test for classes
     icon: i-carbon:industry
     childOf: null
+    roles: [Root, Admin]
 </route>

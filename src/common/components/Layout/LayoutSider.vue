@@ -3,7 +3,7 @@ import generatedRoutes from 'virtual:generated-pages'
 import { MenuItem, SubMenu } from 'ant-design-vue'
 
 import { isDark } from '~/common/composables'
-import { mdAndLarger, sideCollapsed } from '~/common/stores'
+import { currentUser, mdAndLarger, sideCollapsed } from '~/common/stores'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -36,7 +36,8 @@ onMounted(() => {
 
 <template>
   <a-layout-sider
-    class="z-42 md:rounded-none rounded-b-sm overflow-hidden" :collapsed="sideCollapsed" :trigger="null"
+    v-if="currentUser" class="z-42 md:rounded-none rounded-b-sm overflow-hidden" :collapsed="sideCollapsed"
+    :trigger="null"
     collapsed-width="60"
     :width="mdAndLarger ? 240 : 60"
   >
@@ -45,7 +46,7 @@ onMounted(() => {
       :theme="isDark ? 'dark' : 'light'" :mode="mdAndLarger ? 'inline' : 'horizontal'" :style="{ height: '100%' }"
       class="!dark:border-r-1px !dark:border-white/5 !md:pt-2" @click="({ key }) => $router.push({ name: key })"
     >
-      <component :is="parent.children ? SubMenu : MenuItem" v-for="parent in menuItems" :key="parent.link">
+      <component :is="parent.children ? SubMenu : MenuItem" v-for="parent in menuItems.filter(m => !m.roles || m.roles?.includes(currentUser.role))" :key="parent.link">
         <template v-if="parent.children" #title>
           <span>
             <span :class="parent.parentIcon || parent.icon" class="inline-block anticon text-lg" />
@@ -53,7 +54,7 @@ onMounted(() => {
           </span>
         </template>
         <template v-if="parent.children">
-          <component :is="MenuItem" v-for="item in parent.children" :key="item.link">
+          <component :is="MenuItem" v-for="item in parent.children.filter(m => !m.roles || m.roles?.includes(currentUser.role))" :key="item.link">
             <span class>
               <span :class="item.icon" class="inline-block anticon text-lg" />
               <span>{{ t(`sidebarMenu.${item.name}`) }}</span>

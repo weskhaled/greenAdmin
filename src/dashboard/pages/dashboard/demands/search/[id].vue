@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
-import dayjs, { Dayjs } from 'dayjs'
-import { Form, Modal, message } from 'ant-design-vue'
+import { Form, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
-import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
+import SwiperCore, { Controller, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { currentUser, token } from '~/common/stores'
 import 'swiper/css/pagination'
 
 import { api as apiServices } from '~/common/composables'
-const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
 
 const controlledSwiper = ref(null)
 const offerSwiper = ref(null)
@@ -26,8 +22,6 @@ const useForm = Form.useForm
 const currentStep = ref(0)
 const profileEntrepriseLoading = ref(false)
 const jobs = ref([])
-const jobsName = ref([])
-const jobsId = ref([])
 const languages = ref([])
 const levels = ref([])
 const skills = ref([])
@@ -213,20 +207,6 @@ onMounted(async() => {
 </script>
 
 <template>
-  <a-page-header
-    v-if="profile?.freelancer"
-    class="!bg-white !dark:bg-dark-600 !p-4 !mb-4 drop-shadow-sm drop-shadow-dark-100/1 rounded-1px"
-    :title="`Freelance : ${profile?.freelancer?.lastName} ${profile?.freelancer?.firstName}`"
-  >
-    <template #tags>
-      <a-tag v-if="profile?.freelancer?.validated" color="green">
-        Compte validé
-      </a-tag>
-      <a-tag v-else color="red">
-        Compte non validé
-      </a-tag>
-    </template>
-  </a-page-header>
   <div class="drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">
     <!--== Start Login Area Wrapper ==-->
     <section class="account-login-area !bg-white !dark:bg-dark-600 !p-4 !mb-4 drop-shadow-sm drop-shadow-dark-100/1 rounded-1px">

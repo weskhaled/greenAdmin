@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { reactive, ref } from 'vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { currentUser } from '~/common/stores'
 import { api as apiServices } from '~/common/composables'
 
+const searchText = ref('')
 const selectedUser = ref(null)
 const visibleUserFormModal = ref(false)
 const routes = [

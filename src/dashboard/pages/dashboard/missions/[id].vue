@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
-import dayjs, { Dayjs } from 'dayjs'
-import { Form, Modal, message } from 'ant-design-vue'
+import dayjs from 'dayjs'
+import { Form, message } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/es/form'
-import SwiperCore, { Controller, Pagination, Scrollbar } from 'swiper'
+import SwiperCore, { Controller, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { currentUser, token } from '~/common/stores'
+import { currentUser } from '~/common/stores'
 import 'swiper/css/pagination'
 
 import { api as apiServices } from '~/common/composables'
-const BASE_PREFIX = `${import.meta.env.VITE_API_BASEURL}`
 
 const useForm = Form.useForm
 SwiperCore.use([Controller, Pagination])
 const controlledSwiper = ref(null)
-const controlledBlocSwiper = ref(null)
+const boolTrue = ref(true)
 
 const setDevisSwiper = (swiper) => {
   controlledSwiper.value = swiper
-}
-const setBlocSwiper = (swiper) => {
-  controlledBlocSwiper.value = swiper
 }
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -248,7 +243,6 @@ const getDevis = async(idCompany: any) => {
     devis.value = dataDevisByMissionId.value.devises
     users.value = dataDevisByMissionId.value.users
     unpayedAmounts.value = dataDevisByMissionId.value.unpayedAmounts
-    console.log('devis ', devis.value)
   }
   else { message.error(errorDevisByMissionId.value) }
 }
@@ -1001,7 +995,7 @@ const onFinishFailed = (errorInfo: any) => {
                             <a-slider
                               v-model:value="formStateMission.work_frequence"
                               :step="null"
-                              disabled="true"
+                              :disabled="boolTrue"
                               :tip-formatter="null"
                               :marks="{
                                 0: '1 jour',
@@ -1046,7 +1040,7 @@ const onFinishFailed = (errorInfo: any) => {
                             <a-slider
                               v-model:value="formStateMission.nb_days_telework"
                               :step="null"
-                              disabled="true"
+                              :disabled="boolTrue"
                               :tip-formatter="null"
                               :marks="{
                                 0: '1 jour',

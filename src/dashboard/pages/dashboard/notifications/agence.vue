@@ -380,5 +380,6 @@ meta:
     link: dashboard-notifications-agence
     classes: test for classes
     icon: i-carbon-notification
-    childOf: dashboard-notifications-posts
+    childOf: dashboard-notifications-editors
+    roles: [Root, Admin]
 </route>
